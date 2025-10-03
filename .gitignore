@@ -24,3 +24,5 @@ proguard/
 .idea/caches
 
 /.idea/
+/convention-plugins/.gradle/
+/buildSrc/.gradle/
