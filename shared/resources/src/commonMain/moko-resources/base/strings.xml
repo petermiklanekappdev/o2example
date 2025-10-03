@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App -->
+    <string name="app_name">Example</string>
+
+    <!-- Input -->
+    <string name="input_title">Input</string>
+    <string name="input_optional">Optional</string>
+    <string name="input_placeholder">Placeholder</string>
+
+    <!-- Example -->
+    <string name="example_title">Example app</string>
+    <string name="example_button_scratch">Scratch</string>
+    <string name="example_button_activation">Activation</string>
+    <string name="example_button_reset_data">Reset data</string>
+
+    <!-- Scratch -->
+    <string name="scratch_title">Scratch</string>
+    <string name="scratch_reveal">Reveal</string>
+
+    <!-- Activation -->
+    <string name="activation_title">Activation</string>
+    <string name="activation_activate">Activate</string>
+    <string name="activation_activated">Activated</string>
+    <string name="activation_error">Error</string>
+    <string name="activation_ok">OK</string>
+</resources>
