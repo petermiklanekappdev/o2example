@@ -69,9 +69,17 @@ fun ActivationScreenUi(
     if (showErrorDialog) {
         AlertDialog(
             title = { Text(kmpStringResource(MR.strings.activation_error)) },
-            onDismissRequest = { showErrorDialog = false },
+            onDismissRequest = {
+                actions.onDismissDialog()
+                showErrorDialog = false
+            },
             confirmButton = {
-                TextButton(onClick = { showErrorDialog = false }) {
+                TextButton(
+                    onClick = {
+                        actions.onDismissDialog()
+                        showErrorDialog = false
+                    }
+                ) {
                     Text(kmpStringResource(MR.strings.activation_ok))
                 }
             }
@@ -81,9 +89,17 @@ fun ActivationScreenUi(
     if (showSuccessDialog) {
         AlertDialog(
             title = { Text(kmpStringResource(MR.strings.activation_activated)) },
-            onDismissRequest = { showSuccessDialog = false },
+            onDismissRequest = {
+                actions.onDismissDialog()
+                showSuccessDialog = false
+            },
             confirmButton = {
-                TextButton(onClick = { showSuccessDialog = false }) {
+                TextButton(
+                    onClick = {
+                        actions.onDismissDialog()
+                        showSuccessDialog = false
+                    }
+                ) {
                     Text(kmpStringResource(MR.strings.activation_ok))
                 }
             }
@@ -131,7 +147,7 @@ private fun Content(
 private fun TopAppBar(
     actions: ActivationScreen.Actions,
     modifier: Modifier = Modifier
-){
+) {
     CenterAlignedTopAppBar(
         modifier = modifier,
         title = {
@@ -155,6 +171,7 @@ private fun Preview() {
     val actions = object : ActivationScreen.Actions {
         override fun onActivate() {}
         override fun onPop() {}
+        override fun onDismissDialog() {}
     }
     MyApplicationTheme {
         Surface {

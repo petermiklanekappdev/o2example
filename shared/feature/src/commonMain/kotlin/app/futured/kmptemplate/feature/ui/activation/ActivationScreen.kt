@@ -12,5 +12,6 @@ interface ActivationScreen {
     interface Actions {
         fun onActivate()
         fun onPop()
+        fun onDismissDialog()
     }
 }

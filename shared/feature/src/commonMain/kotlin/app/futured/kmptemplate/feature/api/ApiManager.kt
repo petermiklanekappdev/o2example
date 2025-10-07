@@ -1,5 +1,10 @@
 package app.futured.kmptemplate.feature.api
 
+import app.futured.kmptemplate.feature.domain.StateContent
+import app.futured.kmptemplate.feature.domain.StateEmpty
+import app.futured.kmptemplate.feature.domain.StateError
+import app.futured.kmptemplate.feature.domain.StateLoading
+import app.futured.kmptemplate.feature.domain.UiState
 import app.futured.kmptemplate.network.rest.api.ExampleApi
 import app.futured.kmptemplate.network.rest.result.getOrThrow
 import kotlinx.coroutines.CoroutineScope
@@ -15,16 +20,23 @@ import org.koin.core.annotation.Single
 class ApiManager(
     private val exampleApi: ExampleApi
 ) {
-    val validationCodeState = MutableStateFlow<String?>(null)
+    val validationCodeState = MutableStateFlow<UiState<String?>>(StateEmpty)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     fun activateCode(code: String) {
         scope.launch {
-            validationCodeState.value = exampleApi.getVersion(code).getOrThrow().android
+            runCatching {
+                validationCodeState.value = StateLoading
+                exampleApi.getVersion(code).getOrThrow().android
+            }.onSuccess { androidVersion ->
+                validationCodeState.value = StateContent(androidVersion)
+            }.onFailure { error ->
+                validationCodeState.value = StateError(error)
+            }
         }
     }
 
     fun clearValidationCode() {
-        validationCodeState.value = null
+        validationCodeState.value = StateEmpty
     }
 }

@@ -1,6 +1,9 @@
 package app.futured.kmptemplate.feature.ui.activation
 
 import app.futured.factorygenerator.annotation.GenerateFactory
+import app.futured.kmptemplate.feature.domain.StateContent
+import app.futured.kmptemplate.feature.domain.StateError
+import app.futured.kmptemplate.feature.domain.StateLoading
 import app.futured.kmptemplate.feature.domain.code.ActivateScratchCodeUseCase
 import app.futured.kmptemplate.feature.domain.code.ClearValidationCodeUseCase
 import app.futured.kmptemplate.feature.domain.code.ObserveValidationCodeUseCase
@@ -38,19 +41,29 @@ internal class ActivationComponent(
 
     init {
         observeValidationCodeUseCase.execute {
-            onNext { code ->
-                if (code == null) return@onNext
+            onNext { state ->
+                when {
+                    state is StateLoading -> {
+                        componentState.update { oldState -> oldState.copy(isLoading = true) }
+                    }
 
-                val validation = code.toLongOrNull() ?: 0
+                    state is StateError -> {
+                        sendUiEvent(ActivationEvent.ShowErrorDialog)
+                        componentState.update { oldState -> oldState.copy(isLoading = false) }
+                    }
 
-                if (validation > VALIDATION_MIN_VALUE) {
-                    sendUiEvent(ActivationEvent.ShowSuccessDialog)
-                } else {
-                    sendUiEvent(ActivationEvent.ShowErrorDialog)
+                    state is StateContent -> {
+                        val validation = state.item?.toLongOrNull() ?: 0
+
+                        if (validation > VALIDATION_MIN_VALUE) {
+                            sendUiEvent(ActivationEvent.ShowSuccessDialog)
+                        } else {
+                            sendUiEvent(ActivationEvent.ShowErrorDialog)
+                        }
+
+                        componentState.update { oldState -> oldState.copy(isLoading = false) }
+                    }
                 }
-
-                componentState.update { oldState -> oldState.copy(isLoading = false) }
-                clearValidationCodeUseCase.execute { }
             }
             onError {
                 sendUiEvent(ActivationEvent.ShowErrorDialog)
@@ -74,6 +87,10 @@ internal class ActivationComponent(
 
     override fun onPop() {
         pop()
+    }
+
+    override fun onDismissDialog() {
+        clearValidationCodeUseCase.execute { }
     }
 
     companion object {
